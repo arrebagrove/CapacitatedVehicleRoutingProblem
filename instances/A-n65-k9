@@ -1,8 +1,4 @@
-data;
-param n := 65;
-param K := 9;
-param cap := 100;
-param: lat lng := 
+65 9 100
  1 25 51
  2 35 7
  3 93 75
@@ -68,8 +64,6 @@ param: lat lng :=
  63 25 33
  64 9 19
  65 3 65
- ;
-param D:= 
 1 0 
 2 12 
 3 24 
@@ -135,7 +129,3 @@ param D:=
 63 16 
 64 23 
 65 14 
-;
-
-end;
-

@@ -14,10 +14,10 @@ namespace CapacitatedVehicleRoutingProblem
         {
             try
             {
-                using (StreamReader sr = new StreamReader("../../../../instances/" + fileName))
+                using (StreamReader sr = new StreamReader("../../../instances/" + fileName))
                 {
                     String line;
-
+                    
                     // First line contains: N(number os nodes) K(number of vehicles) C(Global Capacity)
                     if ((line = sr.ReadLine()) != null)
                     {

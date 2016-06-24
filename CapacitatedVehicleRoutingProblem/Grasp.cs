@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -12,17 +13,10 @@ namespace CapacitatedVehicleRoutingProblem
         public const int INFINITY = UInt16.MaxValue; // Positive Infinity
 
         private static int globalOptimal = INFINITY;
+        private static VCRPSolution bestSolution = new VCRPSolution(VCRPInstance.n_vehicles, VCRPInstance.n_nodes);
 
-        public static int Execute(VCRPInstance instance)
-        {                                                
-            // Grasp Parameters
-            int maxIterations = 10;
-            int alpha = 0;
-            // 
-            int localOptimal = 0;
-            int seed = 0; // ?
-
-
+        public static VCRPSolution Execute(VCRPInstance instance)
+        {
             // Constructive Heuristic Phase
             /*
             procedure GRASP(Max Iterations,Seed)
@@ -36,22 +30,49 @@ namespace CapacitatedVehicleRoutingProblem
             end GRASP.
             */
 
+            // Grasp Parameters
+            int maxIterations = 1;
+            int alpha = 1;
+            
+            int seed = 0; // ?
+
             VCRPSolution solution = new VCRPSolution(VCRPInstance.n_vehicles, VCRPInstance.n_nodes);
+
             for (int k=0; k < maxIterations; k++)
             {
-                //localOptimal = INFINITY;
-
                 solution = GreedyRandomizedSolution(alpha, seed);
-                solution = LocalSearch(solution);
-
-                if (localOptimal < globalOptimal)
+               
+                // TODO: REMOVER-  Output para testes
+                for (int b = 0; b < VCRPInstance.n_vehicles; b++)
                 {
-                    globalOptimal = localOptimal;
-                    //UpdateGlobalSolution(S, assignments, facID, bestLocalDist);
+                    Console.WriteLine("Rota "+b+":");
+                    List<int> range = solution.routes[b];
+                    foreach (int value in range)
+                    {
+                        Console.Write(value + " "); // bird, plant
+                    }
+                    Console.WriteLine("\n");
+                              
                 }
+
+                // Local Search
+                // TODO: Implement Local Search
+                //solution = LocalSearch(solution);
+
+                // Check and update best solution
+                updateBestSolution(solution);
+
             }
-            
-            return globalOptimal;
+
+            return bestSolution;
+        }
+
+        private static void updateBestSolution(VCRPSolution newSolution)
+        {
+            if(bestSolution.cost > newSolution.cost)
+            {
+                bestSolution = newSolution;
+            }
         }
     }
 }

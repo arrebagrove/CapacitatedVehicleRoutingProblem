@@ -24,104 +24,118 @@ namespace CapacitatedVehicleRoutingProblem
         */
 
         public static VCRPSolution GreedyRandomizedSolution(int alpha, int seed)
-        {
+        {            
             // Instanciate solution
             VCRPSolution solution = new VCRPSolution(VCRPInstance.n_vehicles,VCRPInstance.n_nodes);
 
-            // Get all clients as candidates for C set
-            double[,] CandidatesSet = getCandidates();   
-                        
+            // Get all clients as candidates for C set ; Clients -> Depot
+            List<Tuple<int,int,double>> candidatesSet = getCandidates();
+
             // Restricted Candidate List
-            List<Tuple<int,int>> RCL = new List<Tuple<int, int>>();
+            List<Tuple<int, int, double>> RCL = new List<Tuple<int, int, double>>();
 
             // Evaluate cost Min and Max of c(e) of all elements in CandidatesSet
-            Tuple<double,double> cMinMax = getcMinMax(CandidatesSet);
+            Tuple<double,double> cMinMax = getcMinMax(candidatesSet);
             double cMin = cMinMax.Item1;
             double cMax = cMinMax.Item2;
 
-            // Creates RCL
-            for (int i = 0; i < VCRPInstance.n_nodes; i++)
+            // Random instance
+            Random rand = new Random();
+
+            while (candidatesSet.Count != 0)
             {
-                for (int k = 0; k < VCRPInstance.n_vehicles; k++)
+                // Creates new RCL
+                foreach (var candidate in candidatesSet)
                 {
-                    double currentCost = CandidatesSet[i, k];
-                    if(currentCost <= cMin + alpha*(cMax - cMin))
+                    double currentCost = candidate.Item3;
+                    if (currentCost <= cMin + alpha * (cMax - cMin))
                     {
-                        RCL.Add(Tuple.Create(i,k));
+                        RCL.Add(candidate);
                     }
+                }
+
+                if(RCL.Count != 0)
+                {
+                    // Select a random candidate from RCL ; Candidate = <Client,Vehicle,Cost>
+                    int chosenIndex = rand.Next(0, RCL.Count-1);
+                    Tuple<int, int, double> chosenCandidate = RCL.ElementAt(chosenIndex);
+
+                    // Check if it's feasible to insert the candidate in the solution
+                    insertSolutionElement(chosenCandidate, solution);
+
+                    // Remove chosen candidate from candidateSet  
+                    candidatesSet.RemoveAll(candidate => candidate.Item1 == chosenCandidate.Item1);
+
+                    // List of elements to update cost, where route is the same of the chosenCandidate 
+                    IEnumerable<Tuple<int, int, double>> candidatesToUpdate = candidatesSet.Where(candidate => candidate.Item2 == chosenCandidate.Item2);
+                    List<Tuple<int, int, double>> candidatesToInsert = new List<Tuple<int, int, double>>();
+                    foreach (var candidate in candidatesToUpdate)
+                    {
+                        double newCost = VCRPInstance.weight_matrix[chosenCandidate.Item1, candidate.Item1];
+                        candidatesToInsert.Add(Tuple.Create(candidate.Item1, candidate.Item2, newCost));
+                    }
+                    candidatesSet.RemoveAll(candidate => candidate.Item2 == chosenCandidate.Item2);
+                    candidatesSet.AddRange(candidatesToInsert);
+
+                    // Clear RCL
+                    RCL.Clear();
+                }
+                else
+                {
+                    // No more eligible candidate in the candidatesSet
+                    candidatesSet.Clear();
                 }
             }
 
-            // Select a random candidate from RCL ; Candidate = <Client,Vehicle>
-            Random rand = new Random();
-            int chosenIndex = rand.Next(1, RCL.Count);
-            Tuple<int,int> currentCandidate = RCL.ElementAt(chosenIndex);
-
-            // Check if it's feasible to insert the candidate in the solution
-            insertSolutionElement(currentCandidate, solution);
-            
-
-            return null;
+            return solution;
         }
 
         // Function with containing restraints 
-        public static void insertSolutionElement(Tuple<int, int> currentCandidate, VCRPSolution solution)
+        public static void insertSolutionElement(Tuple<int, int, double> currentCandidate, VCRPSolution solution)
         {
             int client = currentCandidate.Item1;
             int route = currentCandidate.Item2;
+            double cost = currentCandidate.Item3;
 
-            //Check
-            /* 
-            if ()
-            {
-                solution.routes[route].Add(client);
-            }*/
-          
+            solution.routes[route].Add(client);
+            solution.cost += cost;
+            
+            //TODO: Use x ?          
         }
 
-        public static Tuple<double,double> getcMinMax(double[,] CandidatesSet)
+        public static Tuple<double,double> getcMinMax(List<Tuple<int,int,double>> candidatesSet)
         {
             double cMin = INFINITY;
             double cMax = -INFINITY;
-
-
-            for (int i = 0; i < VCRPInstance.n_nodes; i++)
+            
+            foreach(var candidate in candidatesSet)
             {
-                for (int k = 0; k < VCRPInstance.n_vehicles; k++)
+                if (cMin > candidate.Item3)
                 {
-                    // Update cMin and cMax
-                    if (cMin > CandidatesSet[i, k])
-                    {
-                        cMin = CandidatesSet[i, k];
-                    }
-                    if (cMax < CandidatesSet[i, k])
-                    {
-                        cMax = CandidatesSet[i, k];
-                    }
-
+                    cMin = candidate.Item3;
+                }
+                if(cMax < candidate.Item3)
+                {
+                    cMax = candidate.Item3;
                 }
             }
-
             return Tuple.Create(cMin,cMax);
         }
-        
-        public static double[,] getCandidates()
+        public static List<Tuple<int, int, double>> getCandidates()
         {
-            // ALL CLIENTS
-            double[,] candidatesSet = new double[1, VCRPInstance.n_vehicles];
+            List<Tuple<int, int, double>> candidateSet = new List<Tuple<int, int, double>>();
             int depot = 0;
 
-            for(int i = 0; i < VCRPInstance.n_nodes; i++)
+            for(int i = 1; i < VCRPInstance.n_nodes; i++)
             {
-                for(int k = 0; k < VCRPInstance.n_vehicles; k++)
+                for(int k = 0; k<VCRPInstance.n_vehicles; k++)
                 {
-                    candidatesSet[i, k] = VCRPInstance.weight_matrix[i, depot];
+                    candidateSet.Add(Tuple.Create(i, k, VCRPInstance.weight_matrix[depot,i]));
                 }
             }
 
-            return candidatesSet;
+            return candidateSet;
         }
-
-
+    
     }
 }

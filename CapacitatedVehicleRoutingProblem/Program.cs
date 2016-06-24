@@ -50,12 +50,11 @@ namespace CapacitatedVehicleRoutingProblem
             stopWatch.Start();
 
             // GRASP
-            int optimalResult;
             VCRPInstance instance = new VCRPInstance();
-            optimalResult = Grasp.Execute(instance); 
+            VCRPSolution bestSolution = Grasp.Execute(instance); 
             stopWatch.Stop();
 
-            Console.WriteLine("Valor da solucao final: " + optimalResult);
+            Console.WriteLine("Valor da solucao final: " + bestSolution.cost);
             Console.WriteLine("Solução final encontrada em " + stopWatch.Elapsed + " segundos.");
             
             string wait = Console.ReadLine();

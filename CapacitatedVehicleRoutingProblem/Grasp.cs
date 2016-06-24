@@ -17,9 +17,9 @@ namespace CapacitatedVehicleRoutingProblem
         {                                                
             // Grasp Parameters
             int maxIterations = 10;
-            
+            int alpha = 0;
             // 
-            int localOptimal;
+            int localOptimal = 0;
             int seed = 0; // ?
 
 
@@ -41,8 +41,8 @@ namespace CapacitatedVehicleRoutingProblem
             {
                 //localOptimal = INFINITY;
 
-                solution = GreedyRandomizedSolution(seed);
-                LocalSearch(solution);
+                solution = GreedyRandomizedSolution(alpha, seed);
+                solution = LocalSearch(solution);
 
                 if (localOptimal < globalOptimal)
                 {

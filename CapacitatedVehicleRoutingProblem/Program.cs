@@ -33,24 +33,31 @@ namespace CapacitatedVehicleRoutingProblem
     {
         static void Main(string[] args)
         {
-            Console.WriteLine(" Capacitated Vehicle Routing Problem (CVRP) Utilizando GRASP \n Mateus Riad (228157) \n Ricardo Pires (208784) \n");
+            Console.Clear();
+            Console.WriteLine("=========================================================================");
+            Console.WriteLine("Capacitated Vehicle Routing Problem (CVRP) Utilizando GRASP \n Mateus Riad (228157) \n Ricardo Pires (208784) \n");
             Console.WriteLine("(Instancias serao pegas da pasta instancias, junto com a pasta do projeto) \n");
+            Console.WriteLine("=========================================================================");
             Console.WriteLine("Escolha o nome da instancia que deseja utilizar: ");
             string fileName = Console.ReadLine();
 
             // Pega as informaçoes do arquivo de instancia passado
             Parser.parserFile(fileName);
 
+            Console.WriteLine("=== EXECUTANDO GRASP ===\n");
             // Inicializa timer 
             Stopwatch stopWatch = new Stopwatch();
             stopWatch.Start();
 
-            // TODO: GRASP 
-
+            // GRASP
+            int optimalResult;
+            VCRPInstance instance = new VCRPInstance();
+            optimalResult = Grasp.Execute(instance); 
             stopWatch.Stop();
 
-            //Console.WriteLine("Valor da solucao final: " +);
-            //Console.WriteLine("Solução final encontrada em " + stopWatch.Elapsed + " segundos.);
+            Console.WriteLine("Valor da solucao final: " + optimalResult);
+            Console.WriteLine("Solução final encontrada em " + stopWatch.Elapsed + " segundos.");
+            
             string wait = Console.ReadLine();
         }
     }

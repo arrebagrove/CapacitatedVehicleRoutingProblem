@@ -43,9 +43,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Grasp-GreedyRandom.cs" />
+    <Compile Include="Grasp-LocalSearch.cs" />
+    <Compile Include="Grasp.cs" />
     <Compile Include="Parser.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="VCRPSolution.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

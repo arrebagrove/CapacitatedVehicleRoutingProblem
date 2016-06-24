@@ -21,7 +21,7 @@ namespace CapacitatedVehicleRoutingProblem
                     // First line contains: N(number os nodes) K(number of vehicles) C(Global Capacity)
                     if ((line = sr.ReadLine()) != null)
                     {
-                        String[] words = line.Split(' ');
+                        String[] words = line.Trim().Split(' ');
                         VCRPInstance.n_nodes = Convert.ToInt32(words[0]);
                         VCRPInstance.n_vehicles = Convert.ToInt32(words[1]);
                         VCRPInstance.g_capacity = Convert.ToInt32(words[2]);

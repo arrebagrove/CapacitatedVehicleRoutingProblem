@@ -21,24 +21,24 @@ namespace CapacitatedVehicleRoutingProblem
         {
             Random rand = new Random();
             
-            List<int> chosenPositions = new List<int>;
-            for (int i = 0; i < n; i++)
+            List<int> moved = new List<int>();
+
+            if (n < route.Count()-2)
             {
-                bool wasMoved = false;
-                while (wasMoved != true)
+                for (int i = 0; i < n; i++)
                 {
                     // Disconsider depot: Route -> (depot - n clients - depot )
                     int index1 = rand.Next(1, route.Count - 2);
                     int index2 = rand.Next(1, route.Count - 2);
 
-                    if(index1 != index2)
+                    if (index1 != index2 && !moved.Contains(index1))
                     {
                         SwapRouteIndexes(route, index1, index2);
-                        wasMoved = true;
+                        moved.Add(index2);
+                            
                     }
                 }
             }
-            
         }
 
 

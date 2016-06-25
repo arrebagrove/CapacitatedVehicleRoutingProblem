@@ -9,18 +9,21 @@ namespace CapacitatedVehicleRoutingProblem
     static partial class Grasp
     {
         /*
-        procedure Greedy Randomized Construction(Seed)
-            1 Solution ← ∅;
-            2 Evaluate the incremental costs of the candidate elements;
-            3 while Solution is not a complete solution do
-            4 Build the restricted candidate list(RCL);
-            5 Select an element s from the RCL at random;
-            6 Solution ← Solution ∪ {s
-                };
-            7 Reevaluate the incremental costs;
-            8 end;
-            9 return Solution;
-        end Greedy Randomized Construction.
+            procedure Greedy Randomized Construction(α, Seed)
+                1 Solution ← ∅;
+                2 Initialize the candidate set: C ← E;
+                3 Evaluate the incremental cost c(e) for all e ∈ C;
+                4 while C 6= ∅ do
+                5 cMin ← min{c(e) | e ∈ C};
+                6 cMax ← max{c(e) | e ∈ C};
+                7 RCL ← {e ∈ C | c(e) ≤ cMin + α(cMax − cMin)};
+                8 Select an element s from the RCL at random;
+                9 Solution ← Solution ∪ {s};
+                10 Update the candidate set C;
+                11 Reevaluate the incremental costs c(e) for all e ∈ C;
+                12 end;
+                13 return Solution;
+            end Greedy Randomized Construction.
         */
 
         public static VCRPSolution GreedyRandomizedSolution(int alpha, int seed)

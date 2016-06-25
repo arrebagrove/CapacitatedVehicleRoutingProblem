@@ -12,7 +12,6 @@ namespace CapacitatedVehicleRoutingProblem
     { 
         public static VCRPSolution Execute(VCRPInstance instance)
         {
-            // Constructive Heuristic Phase
             /*
             procedure GRASP(Max Iterations,Seed)
                 1 Read Input();
@@ -40,6 +39,7 @@ namespace CapacitatedVehicleRoutingProblem
 
             for (int k = 0; k < maxIterations; k++)
             {
+                // Constructive Heuristic Phase
                 currentSolution = GreedyRandomizedSolution(alpha, seed);
 
                 // Local Search

@@ -76,6 +76,8 @@ namespace CapacitatedVehicleRoutingProblem
                             VCRPInstance.weight_matrix[i, j] = GetDistance(VCRPInstance.nodes[i], VCRPInstance.nodes[j]);
                         }
                     }
+
+                    VCRPInstance.depot = 0;
                 }
             }
             catch (Exception e)

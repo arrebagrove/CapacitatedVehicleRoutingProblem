@@ -15,11 +15,11 @@ namespace CapacitatedVehicleRoutingProblem
         // K routes/vehicles, N nodes 
         public VCRPSolution(int k, int n)
         {
-            cost = double.MaxValue;
+            cost = 0;
             x = new int[n, n];
             routes = new List<int>[k];
             for (int i = 0; i < k; i++)
                 routes[i] = new List<int>();
-        } 
+        }
     }
 }

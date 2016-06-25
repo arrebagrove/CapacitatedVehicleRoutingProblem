@@ -9,12 +9,7 @@ using System.Threading.Tasks;
 namespace CapacitatedVehicleRoutingProblem
 {
     static partial class Grasp
-    {
-        public const int INFINITY = UInt16.MaxValue; // Positive Infinity
-
-        private static int globalOptimal = INFINITY;
-        private static VCRPSolution bestSolution = new VCRPSolution(VCRPInstance.n_vehicles, VCRPInstance.n_nodes);
-
+    { 
         public static VCRPSolution Execute(VCRPInstance instance)
         {
             // Constructive Heuristic Phase
@@ -33,45 +28,38 @@ namespace CapacitatedVehicleRoutingProblem
             // Grasp Parameters
             int maxIterations = 1;
             int alpha = 1;
-            
             int seed = 0; // ?
 
-            VCRPSolution solution = new VCRPSolution(VCRPInstance.n_vehicles, VCRPInstance.n_nodes);
+            // Initialize best solution with worst solution
+            const int worstSolution = UInt16.MaxValue;
+            VCRPSolution bestSolution = new VCRPSolution(VCRPInstance.n_vehicles, VCRPInstance.n_nodes);
+            bestSolution.cost = worstSolution;
 
-            for (int k=0; k < maxIterations; k++)
+            // Solution instance used for grasp iterations
+            VCRPSolution currentSolution;
+
+            for (int k = 0; k < maxIterations; k++)
             {
-                solution = GreedyRandomizedSolution(alpha, seed);
-               
-                // TODO: REMOVER-  Output para testes
-                for (int b = 0; b < VCRPInstance.n_vehicles; b++)
-                {
-                    Console.WriteLine("Rota "+b+":");
-                    List<int> range = solution.routes[b];
-                    foreach (int value in range)
-                    {
-                        Console.Write(value + " "); // bird, plant
-                    }
-                    Console.WriteLine("\n");
-                              
-                }
+                currentSolution = GreedyRandomizedSolution(alpha, seed);
 
                 // Local Search
                 // TODO: Implement Local Search
                 //solution = LocalSearch(solution);
 
                 // Check and update best solution
-                updateBestSolution(solution);
-
+                updateBestSolution(bestSolution, currentSolution);
             }
 
             return bestSolution;
         }
 
-        private static void updateBestSolution(VCRPSolution newSolution)
+        private static void updateBestSolution(VCRPSolution bestSolution, VCRPSolution newSolution)
         {
             if(bestSolution.cost > newSolution.cost)
             {
-                bestSolution = newSolution;
+                bestSolution.cost = newSolution.cost;
+                bestSolution.routes = newSolution.routes;
+                bestSolution.x = newSolution.x;
             }
         }
     }

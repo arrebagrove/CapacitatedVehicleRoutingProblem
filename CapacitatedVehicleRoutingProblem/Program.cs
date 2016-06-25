@@ -12,6 +12,7 @@ namespace CapacitatedVehicleRoutingProblem
         public static int n_nodes;
         public static int n_vehicles;
         public static int g_capacity;
+        public static int depot;
         public static double[,] weight_matrix;
         public static Node[] nodes;
     }
@@ -35,16 +36,16 @@ namespace CapacitatedVehicleRoutingProblem
         {
             Console.Clear();
             Console.WriteLine("=========================================================================");
-            Console.WriteLine("Capacitated Vehicle Routing Problem (CVRP) Utilizando GRASP \n Mateus Riad (228157) \n Ricardo Pires (208784) \n");
-            Console.WriteLine("(Instancias serao pegas da pasta instancias, junto com a pasta do projeto) \n");
+            Console.WriteLine("Capacitated Vehicle Routing Problem (CVRP) with GRASP \n Mateus Riad (228157) \n Ricardo Pires (208784) \n");
+            Console.WriteLine("(All the instances can be found inside this project, dir: instances) \n");
             Console.WriteLine("=========================================================================");
-            Console.WriteLine("Escolha o nome da instancia que deseja utilizar: ");
+            Console.WriteLine("Name of the instance to execute: ");
             string fileName = Console.ReadLine();
 
             // Pega as informaçoes do arquivo de instancia passado
             Parser.parserFile(fileName);
 
-            Console.WriteLine("=== EXECUTANDO GRASP ===\n");
+            Console.WriteLine("=== EXECUTING GRASP ===\n");
             // Inicializa timer 
             Stopwatch stopWatch = new Stopwatch();
             stopWatch.Start();
@@ -54,9 +55,10 @@ namespace CapacitatedVehicleRoutingProblem
             VCRPSolution bestSolution = Grasp.Execute(instance); 
             stopWatch.Stop();
 
-            Console.WriteLine("Valor da solucao final: " + bestSolution.cost);
-            Console.WriteLine("Solução final encontrada em " + stopWatch.Elapsed + " segundos.");
-            
+            Console.WriteLine("=== SOLUTION FOUND ===\n");
+            Console.WriteLine("Best solution found: " + bestSolution.cost);
+            Console.WriteLine("Executiond Time:" + stopWatch.Elapsed + " seconds.");
+
             string wait = Console.ReadLine();
         }
     }

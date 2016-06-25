@@ -24,7 +24,7 @@ namespace CapacitatedVehicleRoutingProblem
         */
 
         public static VCRPSolution GreedyRandomizedSolution(int alpha, int seed)
-        {            
+        {         
             // Instanciate solution
             VCRPSolution solution = new VCRPSolution(VCRPInstance.n_vehicles,VCRPInstance.n_nodes);
 
@@ -97,7 +97,6 @@ namespace CapacitatedVehicleRoutingProblem
             int client = currentCandidate.Item1;
             int route = currentCandidate.Item2;
             double cost = currentCandidate.Item3;
-
             solution.routes[route].Add(client);
             solution.cost += cost;
             
@@ -107,6 +106,7 @@ namespace CapacitatedVehicleRoutingProblem
         // Evaluate Min and Max cost of the current candidatesSet
         public static Tuple<double,double> getcMinMax(List<Tuple<int,int,double>> candidatesSet)
         {
+            const int INFINITY = UInt16.MaxValue;
             double cMin = INFINITY;
             double cMax = -INFINITY;
             
@@ -128,13 +128,12 @@ namespace CapacitatedVehicleRoutingProblem
         public static List<Tuple<int, int, double>> getCandidates()
         {
             List<Tuple<int, int, double>> candidateSet = new List<Tuple<int, int, double>>();
-            int depot = 0;
 
             for(int i = 1; i < VCRPInstance.n_nodes; i++)
             {
                 for(int k = 0; k<VCRPInstance.n_vehicles; k++)
                 {
-                    candidateSet.Add(Tuple.Create(i, k, VCRPInstance.weight_matrix[depot,i]));
+                    candidateSet.Add(Tuple.Create(i, k, VCRPInstance.weight_matrix[VCRPInstance.depot, i]));
                 }
             }
 

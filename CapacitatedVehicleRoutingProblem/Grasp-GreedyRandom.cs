@@ -28,18 +28,18 @@ namespace CapacitatedVehicleRoutingProblem
             // Instanciate solution
             VCRPSolution solution = new VCRPSolution(VCRPInstance.n_vehicles,VCRPInstance.n_nodes);
 
-            // Get all clients as candidates for C set ; Clients -> Depot
+            // Get all clients as candidates for candidatesSet; Cost(Depot -> Client)  
             List<Tuple<int,int,double>> candidatesSet = getCandidates();
 
-            // Restricted Candidate List
+            // Restricted Candidate List (RCL)
             List<Tuple<int, int, double>> RCL = new List<Tuple<int, int, double>>();
 
-            // Evaluate cost Min and Max of c(e) of all elements in CandidatesSet
+            // Evaluate Min and Max cost of the candidatesSet
             Tuple<double,double> cMinMax = getcMinMax(candidatesSet);
             double cMin = cMinMax.Item1;
             double cMax = cMinMax.Item2;
 
-            // Random instance
+            // Instanciate random 
             Random rand = new Random();
 
             while (candidatesSet.Count != 0)
@@ -79,6 +79,7 @@ namespace CapacitatedVehicleRoutingProblem
 
                     // Clear RCL
                     RCL.Clear();
+
                 }
                 else
                 {
@@ -90,7 +91,7 @@ namespace CapacitatedVehicleRoutingProblem
             return solution;
         }
 
-        // Function with containing restraints 
+        // Insert new element in the current solution 
         public static void insertSolutionElement(Tuple<int, int, double> currentCandidate, VCRPSolution solution)
         {
             int client = currentCandidate.Item1;
@@ -103,6 +104,7 @@ namespace CapacitatedVehicleRoutingProblem
             //TODO: Use x ?          
         }
 
+        // Evaluate Min and Max cost of the current candidatesSet
         public static Tuple<double,double> getcMinMax(List<Tuple<int,int,double>> candidatesSet)
         {
             double cMin = INFINITY;
@@ -121,6 +123,8 @@ namespace CapacitatedVehicleRoutingProblem
             }
             return Tuple.Create(cMin,cMax);
         }
+
+        // Generate the initial list of candidates to be inserted in the solution 
         public static List<Tuple<int, int, double>> getCandidates()
         {
             List<Tuple<int, int, double>> candidateSet = new List<Tuple<int, int, double>>();

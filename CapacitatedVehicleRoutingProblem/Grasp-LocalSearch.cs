@@ -14,5 +14,17 @@ namespace CapacitatedVehicleRoutingProblem
 
             return null;
         }
+
+        public static double getCostOfRoute(List<int> route)
+        {
+            double totalCost = 0;
+
+            for(int i=0; i < route.Count; i++)
+            {
+                totalCost += VCRPInstance.weight_matrix[route.ElementAt(i), route.ElementAt(i+1)];
+            }
+ 
+            return totalCost;
+        }
     }
 }

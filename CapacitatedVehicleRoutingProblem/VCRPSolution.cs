@@ -19,7 +19,10 @@ namespace CapacitatedVehicleRoutingProblem
             x = new int[n, n];
             routes = new List<int>[k];
             for (int i = 0; i < k; i++)
+            {
                 routes[i] = new List<int>();
+                routes[i].Add(VCRPInstance.depot);
+            }
         }
     }
 }

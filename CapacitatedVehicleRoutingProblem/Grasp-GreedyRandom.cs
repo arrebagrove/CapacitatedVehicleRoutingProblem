@@ -146,5 +146,13 @@ namespace CapacitatedVehicleRoutingProblem
                 solution.cost += VCRPInstance.weight_matrix[lastClient, VCRPInstance.depot];
             }
         }
+
+        // Check if solution is feasible and repair it if not
+        public static void GreedyPostProcessing(VCRPInstance solution)
+        {
+            // Check if it's feasible
+
+        }
+
     }
 }

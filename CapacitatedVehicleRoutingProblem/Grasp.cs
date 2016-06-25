@@ -41,7 +41,6 @@ namespace CapacitatedVehicleRoutingProblem
             {
                 // Constructive Heuristic Phase
                 currentSolution = GreedyRandomizedSolution(alpha, seed);
-
                 // Local Search
                 // TODO: Implement Local Search
                 //solution = LocalSearch(solution);

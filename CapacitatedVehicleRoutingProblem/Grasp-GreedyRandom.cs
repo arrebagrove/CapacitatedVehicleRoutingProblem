@@ -94,9 +94,7 @@ namespace CapacitatedVehicleRoutingProblem
             int route = currentCandidate.Item2;
             double cost = currentCandidate.Item3;
             solution.routes[route].Add(client);
-            solution.cost += cost;
-            
-            //TODO: Use x ?          
+            solution.cost += cost;        
         }
 
         // Evaluate Min and Max cost of the current candidatesSet
@@ -142,6 +140,7 @@ namespace CapacitatedVehicleRoutingProblem
             for(int k=0; k < VCRPInstance.n_vehicles; k++)
             {
                 int lastClient = solution.routes[k].Last();
+
                 solution.routes[k].Add(VCRPInstance.depot);
                 solution.cost += VCRPInstance.weight_matrix[lastClient, VCRPInstance.depot];
             }

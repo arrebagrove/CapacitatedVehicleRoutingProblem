@@ -25,7 +25,7 @@ namespace CapacitatedVehicleRoutingProblem
             */
 
             // Grasp Parameters
-            int maxIterations = 1;
+            int maxIterations = 10;
             double alpha = 1;
             int seed = 0; // ?
 
@@ -42,9 +42,7 @@ namespace CapacitatedVehicleRoutingProblem
                 // Constructive Heuristic Phase
                 currentSolution = GreedyRandomizedSolution(alpha, seed);
                 // Local Search
-                // TODO: Implement Local Search
-                //solution = LocalSearch(solution);
-
+                LocalSearch(currentSolution);
                 // Check and update best solution
                 updateBestSolution(bestSolution, currentSolution);
             }
@@ -58,7 +56,6 @@ namespace CapacitatedVehicleRoutingProblem
             {
                 bestSolution.cost = newSolution.cost;
                 bestSolution.routes = newSolution.routes;
-                bestSolution.x = newSolution.x;
             }
         }
     }

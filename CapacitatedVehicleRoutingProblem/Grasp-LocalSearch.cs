@@ -8,39 +8,129 @@ namespace CapacitatedVehicleRoutingProblem
 {
     static partial class Grasp
     {
-        public static VCRPSolution LocalSearch(VCRPSolution solution)
+        public static void LocalSearch(VCRPSolution solution)
         {
+
+            /*
+            Console.WriteLine("Antes de OPT -----------\n");
+            for (int k = 0; k < VCRPInstance.n_vehicles; k++)
+            {
+                Console.Write("Rota " + k + ":");
+                List<int> range = solution.routes[k];
+                foreach (int value in range)
+                {
+                    Console.Write(value + " - ");
+                }
+                Console.WriteLine("\n");
+            }*/
+
+            // Execute 2-opt for each route of the current solution
+            double newTotalCost = 0;
+            for (int k = 0; k < VCRPInstance.n_vehicles; k++)
+            {
+                newTotalCost += TwoOpt(solution.routes[k]);
+            }
+
+            solution.cost = newTotalCost;
             
 
-            return null;
+
+            /*
+            Console.WriteLine("Depois de OPT -----------\n");
+            for (int k = 0; k < VCRPInstance.n_vehicles; k++)
+            {
+                Console.Write("Rota " + k + ":");
+                List<int> range = solution.routes[k];
+                foreach (int value in range)
+                {
+                    Console.Write(value + " - ");
+                }
+                Console.WriteLine("\n");
+            }*/
+
+            //return solution;
         }
 
 
-        // Selects randomly n clients positions and move them randomly inside the route
-        public static void intraMovement(List<int> route, int n)
+        // Try to improve route cost
+        public static double TwoOpt(List<int> route)
         {
-            Random rand = new Random();
+            // best route
+            List<int> newRoute = new List<int>();
             
-            List<int> moved = new List<int>();
+            // repeat until no improvement is made 
+            bool noChange = true;
 
-            if (n < route.Count()-2)
+            double bestCost = getRouteCost(route);
+
+            route.RemoveAll(x => x == VCRPInstance.depot);
+            
+            // Get tour size
+            int size = route.Count();
+
+            while (noChange)
             {
-                for (int i = 0; i < n; i++)
+                for (int i = 0; i < size - 1; i++)
                 {
-                    // Disconsider depot: Route -> (depot - n clients - depot )
-                    int index1 = rand.Next(1, route.Count - 2);
-                    int index2 = rand.Next(1, route.Count - 2);
-
-                    if (index1 != index2 && !moved.Contains(index1))
+                    for (int k = i + 1; k < size; k++)
                     {
-                        SwapRouteIndexes(route, index1, index2);
-                        moved.Add(index2);
-                            
+                        newRoute = TwoOptSwap(route, i, k);
+
+                        newRoute.Insert(0, VCRPInstance.depot);
+                        newRoute.Add(VCRPInstance.depot);     
+
+                        double newCost = getRouteCost(newRoute);
+
+                        if (newCost < bestCost)
+                        {
+                            // Improvement found so reset
+                            route.Clear();
+                            route.AddRange(newRoute);
+                            bestCost = newCost;
+                            route.RemoveAll(x => x == VCRPInstance.depot);
+                        }
+                        else
+                        {
+                            noChange = false;
+                        }
                     }
                 }
             }
+            route.Insert(0, VCRPInstance.depot);
+            route.Add(VCRPInstance.depot);
+
+            return bestCost;
         }
 
+
+        public static List<int> TwoOptSwap(List<int> route, int i, int k ) 
+        {
+            List<int> newRoute = new List<int>();
+
+            double size = route.Count();
+ 
+            // 1. take route[0] to route[i-1] and add them in order to new_route
+            for ( int c = 0; c <= i - 1; ++c)
+            {
+                newRoute.Add(route.ElementAt(c));
+            }
+
+            // 2. take route[i] to route[k] and add them in reverse order to new_route
+            int dec = 0;
+            for ( int c = i; c <= k; ++c)
+            {
+                newRoute.Add(route.ElementAt(k - dec));
+                dec++;
+            }
+ 
+            // 3. take route[k+1] to end and add them in order to new_route
+            for ( int c = k + 1; c < size; ++c)
+            {
+                newRoute.Add(route.ElementAt(c));
+            }
+
+            return newRoute;
+        }
 
         // Evaluate cost of a given route
         public static double getRouteCost(List<int> route)

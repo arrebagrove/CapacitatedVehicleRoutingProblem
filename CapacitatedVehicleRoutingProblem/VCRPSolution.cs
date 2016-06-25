@@ -10,13 +10,11 @@ namespace CapacitatedVehicleRoutingProblem
     {
         public double cost;
         public List<int>[] routes; //k routes, up to n-1 client nodes
-        public int[,] x; // 
-
+ 
         // K routes/vehicles, N nodes 
         public VCRPSolution(int k, int n)
         {
             cost = 0;
-            x = new int[n, n];
             routes = new List<int>[k];
             for (int i = 0; i < k; i++)
             {

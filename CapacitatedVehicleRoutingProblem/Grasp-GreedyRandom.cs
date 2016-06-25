@@ -147,10 +147,42 @@ namespace CapacitatedVehicleRoutingProblem
         }
 
         // Check if solution is feasible and repair it if not
-        public static void GreedyPostProcessing(VCRPInstance solution)
+        public static void GreedyPostProcessing(VCRPSolution solution)
         {
-            // Check if it's feasible
+            // List contains the total sum of demands in each route
+            List<double> routesDemand = new List<double>();            
+            // List of unfeasible routes and it's excess over capacity 
+            List<int> brokenRoutes = new List<int>();
+            double[] excessError = new double[VCRPInstance.n_vehicles];
+             
+            // get sum of client's demand for each route
+            for (int k = 0; k < VCRPInstance.n_vehicles; k++)
+            {
+                double currentRouteDemand = getRouteDemand(solution.routes[k]);
+                routesDemand.Add(currentRouteDemand);
+                if (currentRouteDemand > VCRPInstance.g_capacity)
+                {
+                    brokenRoutes.Add(k);
+                    excessError[k] = currentRouteDemand - VCRPInstance.g_capacity;
+                }
+            }
 
+            // If there is any item in brokenRoutes, current solution is not feasible;
+            // Then repair it;
+            while(brokenRoutes.Count != 0)
+            {
+                
+            }
+
+
+
+
+
+        }
+
+        public static double getRouteDemand(List<int> route)
+        {
+            return route.Sum(client => VCRPInstance.nodes[client].demand);
         }
 
     }

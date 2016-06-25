@@ -30,7 +30,7 @@ namespace CapacitatedVehicleRoutingProblem
             int alpha = 1;
             int seed = 0; // ?
 
-            // Initialize best solution with worst solution
+            // Initialize best solution with worst cost
             const int worstSolution = UInt16.MaxValue;
             VCRPSolution bestSolution = new VCRPSolution(VCRPInstance.n_vehicles, VCRPInstance.n_nodes);
             bestSolution.cost = worstSolution;

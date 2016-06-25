@@ -26,7 +26,7 @@ namespace CapacitatedVehicleRoutingProblem
 
             // Grasp Parameters
             int maxIterations = 1;
-            int alpha = 1;
+            double alpha = 1;
             int seed = 0; // ?
 
             // Initialize best solution with worst cost

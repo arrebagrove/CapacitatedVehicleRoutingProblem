@@ -59,6 +59,18 @@ namespace CapacitatedVehicleRoutingProblem
             Console.WriteLine("Best solution found: " + bestSolution.cost);
             Console.WriteLine("Executiond Time:" + stopWatch.Elapsed + " seconds.");
 
+            for(int k=0; k < VCRPInstance.n_vehicles; k++)
+            {
+                Console.Write("Rota " + k + ":");
+                List<int> range = bestSolution.routes[k];
+                foreach (int value in range)
+                {
+                    Console.Write(value + " - ");
+                }
+                Console.WriteLine("\n");
+            }
+
+
             string wait = Console.ReadLine();
         }
     }

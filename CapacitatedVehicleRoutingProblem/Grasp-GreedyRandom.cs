@@ -26,7 +26,7 @@ namespace CapacitatedVehicleRoutingProblem
             end Greedy Randomized Construction.
         */
 
-        public static VCRPSolution GreedyRandomizedSolution(int alpha, int seed)
+        public static VCRPSolution GreedyRandomizedSolution(double alpha, int seed)
         {         
             // Instanciate solution
             VCRPSolution solution = new VCRPSolution(VCRPInstance.n_vehicles,VCRPInstance.n_nodes);
@@ -37,16 +37,16 @@ namespace CapacitatedVehicleRoutingProblem
             // Restricted Candidate List (RCL)
             List<Tuple<int, int, double>> RCL = new List<Tuple<int, int, double>>();
 
-            // Evaluate Min and Max cost of the candidatesSet
-            Tuple<double,double> cMinMax = getcMinMax(candidatesSet);
-            double cMin = cMinMax.Item1;
-            double cMax = cMinMax.Item2;
-
             // Instanciate random 
             Random rand = new Random();
 
             while (candidatesSet.Count != 0)
             {
+                // Evaluate Min and Max cost of the candidatesSet
+                Tuple<double, double> cMinMax = getcMinMax(candidatesSet);
+                double cMin = cMinMax.Item1;
+                double cMax = cMinMax.Item2;
+
                 // Creates new RCL
                 foreach (var candidate in candidatesSet)
                 {
@@ -57,39 +57,32 @@ namespace CapacitatedVehicleRoutingProblem
                     }
                 }
 
-                if(RCL.Count != 0)
+                // Select a random candidate from RCL ; Candidate = <Client,Vehicle,Cost>
+                int chosenIndex = rand.Next(0, RCL.Count-1);
+                Tuple<int, int, double> chosenCandidate = RCL.ElementAt(chosenIndex);
+
+                // Check if it's feasible to insert the candidate in the solution
+                insertSolutionElement(chosenCandidate, solution);
+
+                // Remove chosen candidate from candidateSet  
+                candidatesSet.RemoveAll(candidate => candidate.Item1 == chosenCandidate.Item1);
+
+                // List of elements to update cost, where route is the same of the chosenCandidate 
+                IEnumerable<Tuple<int, int, double>> candidatesToUpdate = candidatesSet.Where(candidate => candidate.Item2 == chosenCandidate.Item2);
+                List<Tuple<int, int, double>> candidatesToInsert = new List<Tuple<int, int, double>>();
+                foreach (var candidate in candidatesToUpdate)
                 {
-                    // Select a random candidate from RCL ; Candidate = <Client,Vehicle,Cost>
-                    int chosenIndex = rand.Next(0, RCL.Count-1);
-                    Tuple<int, int, double> chosenCandidate = RCL.ElementAt(chosenIndex);
-
-                    // Check if it's feasible to insert the candidate in the solution
-                    insertSolutionElement(chosenCandidate, solution);
-
-                    // Remove chosen candidate from candidateSet  
-                    candidatesSet.RemoveAll(candidate => candidate.Item1 == chosenCandidate.Item1);
-
-                    // List of elements to update cost, where route is the same of the chosenCandidate 
-                    IEnumerable<Tuple<int, int, double>> candidatesToUpdate = candidatesSet.Where(candidate => candidate.Item2 == chosenCandidate.Item2);
-                    List<Tuple<int, int, double>> candidatesToInsert = new List<Tuple<int, int, double>>();
-                    foreach (var candidate in candidatesToUpdate)
-                    {
-                        double newCost = VCRPInstance.weight_matrix[chosenCandidate.Item1, candidate.Item1];
-                        candidatesToInsert.Add(Tuple.Create(candidate.Item1, candidate.Item2, newCost));
-                    }
-                    candidatesSet.RemoveAll(candidate => candidate.Item2 == chosenCandidate.Item2);
-                    candidatesSet.AddRange(candidatesToInsert);
-
-                    // Clear RCL
-                    RCL.Clear();
-
+                    double newCost = VCRPInstance.weight_matrix[chosenCandidate.Item1, candidate.Item1];
+                    candidatesToInsert.Add(Tuple.Create(candidate.Item1, candidate.Item2, newCost));
                 }
-                else
-                {
-                    // No more eligible candidate in the candidatesSet
-                    candidatesSet.Clear();
-                }
+                candidatesSet.RemoveAll(candidate => candidate.Item2 == chosenCandidate.Item2);
+                candidatesSet.AddRange(candidatesToInsert);
+
+                // Clear RCL
+                RCL.Clear();
             }
+            // Routes must return to depot
+            addDepotToRoutes(solution);
 
             return solution;
         }
@@ -142,6 +135,16 @@ namespace CapacitatedVehicleRoutingProblem
 
             return candidateSet;
         }
-    
+
+        // Force routes to return to depot and add the corresponding cost
+        public static void addDepotToRoutes(VCRPSolution solution)
+        {
+            for(int k=0; k < VCRPInstance.n_vehicles; k++)
+            {
+                int lastClient = solution.routes[k].Last();
+                solution.routes[k].Add(VCRPInstance.depot);
+                solution.cost += VCRPInstance.weight_matrix[lastClient, VCRPInstance.depot];
+            }
+        }
     }
 }

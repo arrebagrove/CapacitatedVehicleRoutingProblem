@@ -8,9 +8,9 @@ namespace CapacitatedVehicleRoutingProblem
 {
     static partial class Grasp
     {
-
         public static VCRPSolution LocalSearch(VCRPSolution solution)
         {
+            
 
             return null;
         }

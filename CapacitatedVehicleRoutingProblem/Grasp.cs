@@ -25,7 +25,7 @@ namespace CapacitatedVehicleRoutingProblem
             */
 
             // Grasp Parameters
-            int maxIterations = 3;
+            int maxIterations = 200;
             double alpha = 1;
             int seed = 0; // ?
 
@@ -75,8 +75,8 @@ namespace CapacitatedVehicleRoutingProblem
                 Console.WriteLine("Custo total: " + currentSolution.cost + "\n");
 
                 // Local Search
-                LocalSearch(currentSolution);
-
+                //LocalSearch(currentSolution);
+                /*
                 Console.WriteLine("=============================================\n");
                 Console.WriteLine("AFTER LOCAL SEARCH\n");
                 for (int v = 0; v < VCRPInstance.n_vehicles; v++)
@@ -88,9 +88,9 @@ namespace CapacitatedVehicleRoutingProblem
                         Console.Write(value + " - ");
                     }
                     Console.WriteLine("\n");
-                }
-                    // Check and update best solution
-                    updateBestSolution(bestSolution, currentSolution);
+                }*/
+                // Check and update best solution
+                updateBestSolution(bestSolution, currentSolution);
             }
 
             return bestSolution;

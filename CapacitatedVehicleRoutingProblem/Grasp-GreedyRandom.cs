@@ -155,10 +155,6 @@ namespace CapacitatedVehicleRoutingProblem
             List<int> brokenRoutes = new List<int>();
             int[] excessError = new int[VCRPInstance.n_vehicles];
 
-            // USE 2-OPT to organize routes for a better solution
-            LocalSearch(solution);
-            Console.WriteLine("DONE! - LOCAL SEARCH IN THE GREEDY SOLUTION [ NON FEASIBLE ]");
-
             // get sum of client's demand for each route
             for (int k = 0; k < VCRPInstance.n_vehicles; k++)
             {
@@ -174,8 +170,6 @@ namespace CapacitatedVehicleRoutingProblem
             // TODO: Kill them!
             Tuple<double, int, int, int, int> bestFact = new Tuple<double, int, int, int, int>(double.MaxValue, -1, -1, -1, -1);
             Tuple<double, int, int, int, int> bestF = new Tuple<double, int, int, int, int>(double.MaxValue, -1, -1, -1, -1);
-
-
 
             // If there is any item in brokenRoutes, current solution is not feasible;
             // Then repair it;

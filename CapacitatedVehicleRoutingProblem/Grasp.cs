@@ -25,7 +25,7 @@ namespace CapacitatedVehicleRoutingProblem
             */
 
             // Grasp Parameters
-            int maxIterations = 1;
+            int maxIterations = 3;
             double alpha = 1;
             int seed = 0; // ?
 
@@ -54,7 +54,7 @@ namespace CapacitatedVehicleRoutingProblem
                     }
                     Console.WriteLine("\n");
                 }
-
+                Console.WriteLine("Custo total: " + currentSolution.cost + "\n");
 
                 // Check and repair solution in case it's not feasible (YET!)
                 GreedyPostProcessing(currentSolution);
@@ -69,8 +69,10 @@ namespace CapacitatedVehicleRoutingProblem
                     {
                         Console.Write(value + " - ");
                     }
+                    Console.WriteLine(getRouteDemand(currentSolution.routes[v]));
                     Console.WriteLine("\n");
                 }
+                Console.WriteLine("Custo total: " + currentSolution.cost + "\n");
 
                 // Local Search
                 LocalSearch(currentSolution);

@@ -25,7 +25,7 @@ namespace CapacitatedVehicleRoutingProblem
             */
 
             // Grasp Parameters
-            int maxIterations = 10;
+            int maxIterations = 1;
             double alpha = 1;
             int seed = 0; // ?
 
@@ -41,12 +41,54 @@ namespace CapacitatedVehicleRoutingProblem
             {
                 // Constructive Heuristic Phase
                 currentSolution = GreedyRandomizedSolution(alpha, seed);
+
+                Console.WriteLine("=============================================\n");
+                Console.WriteLine("GREEDY - INITIAL SOLUTION\n");
+                for (int v= 0; v < VCRPInstance.n_vehicles; v++)
+                {
+                    Console.Write("Rota " + v + ": ");
+                    List<int> range = currentSolution.routes[v];
+                    foreach (int value in range)
+                    {
+                        Console.Write(value + " - ");
+                    }
+                    Console.WriteLine("\n");
+                }
+
+
                 // Check and repair solution in case it's not feasible (YET!)
                 GreedyPostProcessing(currentSolution);
+
+                Console.WriteLine("=============================================\n");
+                Console.WriteLine("GREEDY - POST PROCESSING\n");
+                for (int v = 0; v < VCRPInstance.n_vehicles; v++)
+                {
+                    Console.Write("Rota " + v + ":" );
+                    List<int> range = currentSolution.routes[v];
+                    foreach (int value in range)
+                    {
+                        Console.Write(value + " - ");
+                    }
+                    Console.WriteLine("\n");
+                }
+
                 // Local Search
                 LocalSearch(currentSolution);
-                // Check and update best solution
-                updateBestSolution(bestSolution, currentSolution);
+
+                Console.WriteLine("=============================================\n");
+                Console.WriteLine("AFTER LOCAL SEARCH\n");
+                for (int v = 0; v < VCRPInstance.n_vehicles; v++)
+                {
+                    Console.Write("Rota " + v + ": ");
+                    List<int> range = currentSolution.routes[v];
+                    foreach (int value in range)
+                    {
+                        Console.Write(value + " - ");
+                    }
+                    Console.WriteLine("\n");
+                }
+                    // Check and update best solution
+                    updateBestSolution(bestSolution, currentSolution);
             }
 
             return bestSolution;

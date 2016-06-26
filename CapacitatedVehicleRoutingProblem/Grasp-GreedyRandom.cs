@@ -150,15 +150,19 @@ namespace CapacitatedVehicleRoutingProblem
         public static void GreedyPostProcessing(VCRPSolution solution)
         {
             // List contains the total sum of demands in each route
-            List<double> routesDemand = new List<double>();            
+            List<int> routesDemand = new List<int>();            
             // List of unfeasible routes and it's excess over capacity 
             List<int> brokenRoutes = new List<int>();
-            double[] excessError = new double[VCRPInstance.n_vehicles];
-             
+            int[] excessError = new int[VCRPInstance.n_vehicles];
+
+            // USE 2-OPT to organize routes for a better solution
+            LocalSearch(solution);
+            Console.WriteLine("DONE! - LOCAL SEARCH IN THE GREEDY SOLUTION [ NON FEASIBLE ]");
+
             // get sum of client's demand for each route
             for (int k = 0; k < VCRPInstance.n_vehicles; k++)
             {
-                double currentRouteDemand = getRouteDemand(solution.routes[k]);
+                int currentRouteDemand = getRouteDemand(solution.routes[k]);
                 routesDemand.Add(currentRouteDemand);
                 if (currentRouteDemand > VCRPInstance.g_capacity)
                 {
@@ -167,20 +171,94 @@ namespace CapacitatedVehicleRoutingProblem
                 }
             }
 
+            // TODO: Kill them!
+            Tuple<double, int, int, int, int> bestFact = new Tuple<double, int, int, int, int>(double.MaxValue, -1, -1, -1, -1);
+            Tuple<double, int, int, int, int> bestF = new Tuple<double, int, int, int, int>(double.MaxValue, -1, -1, -1, -1);
+
+
+
             // If there is any item in brokenRoutes, current solution is not feasible;
             // Then repair it;
-            while(brokenRoutes.Count != 0)
+            while (brokenRoutes.Count != 0)
             {
-                
+                // Find movement to improve feasibility of current solution
+                foreach(int brokenRouteIndex in brokenRoutes)
+                {
+                    for(int k = 0; k < VCRPInstance.n_vehicles; k++)
+                    {
+                        if(brokenRouteIndex != k)
+                        {
+                            foreach(int client in solution.routes[brokenRouteIndex])
+                            {
+                                int localExcessError = 0;
+
+                                if (VCRPInstance.nodes[client].demand + routesDemand.ElementAt(k) > VCRPInstance.g_capacity)
+                                    localExcessError = (VCRPInstance.nodes[client].demand + routesDemand.ElementAt(k)) - VCRPInstance.g_capacity;
+
+                                if (routesDemand.ElementAt(brokenRouteIndex) - VCRPInstance.nodes[client].demand > VCRPInstance.g_capacity)
+                                    localExcessError += routesDemand.ElementAt(brokenRouteIndex) - VCRPInstance.nodes[client].demand;
+
+                                if(localExcessError < excessError[brokenRouteIndex])
+                                {
+                                    Tuple<double, int> movement = Inter10(solution, client, brokenRouteIndex, k);
+
+                                    if (localExcessError == 0 && bestFact.Item1 > movement.Item1)
+                                        bestFact = new Tuple<double, int, int, int, int>(movement.Item1, movement.Item2, client, k, brokenRouteIndex);
+                                    else
+                                    {
+                                        if (bestF.Item1 > movement.Item1)
+                                            bestF = new Tuple<double, int, int, int, int>(movement.Item1, movement.Item2, client, k, brokenRouteIndex);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+                // Execute movement
+                if (bestFact.Item2 != -1)
+                {
+                    // There is a movement that makes the route feasible
+                    // Update solution and remove route from brokenRoutes
+                    Console.WriteLine("Movimento pra resolver o erro! Rota: " + bestFact.Item5);
+                    solution.cost = bestFact.Item1;
+                    solution.routes[bestFact.Item4].Insert(bestFact.Item2, bestFact.Item3);
+                    solution.routes[bestFact.Item5].Remove(bestFact.Item3);
+                    brokenRoutes.Remove(bestFact.Item5);
+                }
+                else if(bestF.Item2 != -1)
+                {
+                    Console.WriteLine("Movimento pra reduzir o erro");
+                    solution.cost = bestF.Item1;
+                    solution.routes[bestF.Item4].Insert(bestF.Item2, bestF.Item3);
+                    solution.routes[bestF.Item5].Remove(bestF.Item3);
+                }
             }
-
-
-
-
-
         }
 
-        public static double getRouteDemand(List<int> route)
+
+        public static Tuple<double, int> Inter10(VCRPSolution solution, int client, int brokenRouteIndex, int k)
+        {
+            //passa c1 de k1 para k2, na melhor posicao possivel. Nao aplica realmente, só calcula
+            List<int> full_route = solution.routes[k];
+            int pos_c1 = solution.routes[brokenRouteIndex].IndexOf(client);
+            Tuple<double, int> move = new Tuple<double, int>(double.MaxValue, -1);
+            for (int i = 1; i < full_route.Count() - 1; i++)
+            {
+                double custo = solution.cost - (VCRPInstance.weight_matrix[i - 1, i]);
+                custo += (VCRPInstance.weight_matrix[i - 1, client]);
+                custo += (VCRPInstance.weight_matrix[client, i]);
+                custo -= (VCRPInstance.weight_matrix[solution.routes[brokenRouteIndex][pos_c1] - 1, pos_c1]);
+                custo -= (VCRPInstance.weight_matrix[pos_c1, solution.routes[brokenRouteIndex][pos_c1 + 1]]);
+                custo += (VCRPInstance.weight_matrix[solution.routes[brokenRouteIndex][pos_c1 - 1], solution.routes[brokenRouteIndex][pos_c1 + 1]]);
+
+                if (custo < move.Item1)
+                    move = new Tuple<double, int>(custo, i);
+            }
+            return move;
+        }
+
+        public static int getRouteDemand(List<int> route)
         {
             return route.Sum(client => VCRPInstance.nodes[client].demand);
         }

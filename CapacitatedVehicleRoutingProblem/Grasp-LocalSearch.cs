@@ -10,20 +10,6 @@ namespace CapacitatedVehicleRoutingProblem
     {
         public static void LocalSearch(VCRPSolution solution)
         {
-
-            /*
-            Console.WriteLine("Antes de OPT -----------\n");
-            for (int k = 0; k < VCRPInstance.n_vehicles; k++)
-            {
-                Console.Write("Rota " + k + ":");
-                List<int> range = solution.routes[k];
-                foreach (int value in range)
-                {
-                    Console.Write(value + " - ");
-                }
-                Console.WriteLine("\n");
-            }*/
-
             // Execute 2-opt for each route of the current solution
             double newTotalCost = 0;
             for (int k = 0; k < VCRPInstance.n_vehicles; k++)
@@ -32,23 +18,6 @@ namespace CapacitatedVehicleRoutingProblem
             }
 
             solution.cost = newTotalCost;
-            
-
-
-            /*
-            Console.WriteLine("Depois de OPT -----------\n");
-            for (int k = 0; k < VCRPInstance.n_vehicles; k++)
-            {
-                Console.Write("Rota " + k + ":");
-                List<int> range = solution.routes[k];
-                foreach (int value in range)
-                {
-                    Console.Write(value + " - ");
-                }
-                Console.WriteLine("\n");
-            }*/
-
-            //return solution;
         }
 
 
@@ -143,13 +112,6 @@ namespace CapacitatedVehicleRoutingProblem
             }
  
             return totalCost;
-        }
-
-        public static void SwapRouteIndexes(IList<int> list, int indexA, int indexB)
-        {
-            int tmp = list[indexA];
-            list[indexA] = list[indexB];
-            list[indexB] = tmp;
         }
 
     }
